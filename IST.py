@@ -1,6 +1,6 @@
 import xlsxwriter
 
-workbook = xlsxwriter.Workbook('ParsedData1.xlsx')
+workbook = xlsxwriter.Workbook('ParsedData.xlsx')
 switchSheet = workbook.add_worksheet('Switch')
 blocksSheet = workbook.add_worksheet('Blocks')
 f = open('text.txt','r', encoding='utf-16-le')
@@ -39,7 +39,7 @@ lastline = []
 
 #block sheet variables:
 user = -1
-block = 0
+block = 1
 NeutCount = 0
 EmoCount = 0
 VerbCount = 0
@@ -47,12 +47,20 @@ NounCount = 0
 blockSheetRow = 1
 
 def resetWords():
+    global NeutCount
+    global EmoCount
+    global VerbCount
+    global NounCount
     NeutCount=0
     EmoCount = 0
     VerbCount = 0
     NounCount = 0
 
 def addWord(word):
+    global NeutCount
+    global EmoCount
+    global VerbCount
+    global NounCount
     if(word == 'Neut'):
         NeutCount+=1
     elif(word == 'Emo'):
@@ -73,33 +81,51 @@ for line in lines[2:]:
         continue
     if(dataArr[3] == '.'): #if it is dammie
         if(len(lastline) > 1) : #if it's not the first blcok
-            if(user == (int)(lastline[0])):
+            if((int)(user) == (int)(lastline[0])):
                 block += 1
             else:
                 user = (int)(lastline[0])
-                block = 0
+                block = 1
             blocksSheet.write(blockSheetRow, 0, user)
-            blocksSheet.write(blockSheetRow, 1, lastline[1])
+            blocksSheet.write(blockSheetRow, 1, (int)(lastline[1]))
             blocksSheet.write(blockSheetRow, 2,block)
-            if(lastline[1]=="1"):
-                if(lastline[6] == 'Stimuli/Instructions/Slide1.png'): #first question was emo
-                    EmoDif = abs(EmoCount - lastline[8])
-                    NeutDif = abs(NeutCount - lastline[7])
-                    blocksSheet.write(blockSheetRow, 4,EmoDif)
-                    blocksSheet.write(blockSheetRow, 5,Neut)
-                    if(EmoDif == 0 and NeutDif == 0):
-                        blocksSheet.write(blockSheetRow, 6,1)
-                    else:
-                        blocksSheet.write(blockSheetRow, 6,0)
+            if(lastline[1]=="1"): #Emo/Neut
+                if(lastline[6] == 'Stimuli/Instructions/Slide1.png'): #first question is abuot emo
+                    EmoDif = abs(EmoCount - (int)(lastline[8].split('{')[0]))
+                    NeutDif = abs(NeutCount - (int)(lastline[7].split('{')[0]))
+                else:
+                    EmoDif = abs(EmoCount - (int)(lastline[7].split('{')[0]))
+                    NeutDif = abs(NeutCount - (int)(lastline[8].split('{')[0]))
+                blocksSheet.write(blockSheetRow, 3,EmoDif)
+                blocksSheet.write(blockSheetRow, 4,NeutDif)
+                if(EmoDif == 0 and NeutDif == 0):
+                    blocksSheet.write(blockSheetRow, 7,1)
+                else:
+                    blocksSheet.write(blockSheetRow, 7,0)
+
+            else:  #Verb/Noun
+                if(lastline[6] == 'Stimuli/Instructions/Slide3.png'): #first question is about verb
+                    verbDif = abs(VerbCount - (int)(lastline[8].split('{')[0]))
+                    NounDif = abs(NounCount - (int)(lastline[7].split('{')[0]))
+                else:
+                    verbDif = abs(VerbCount - (int)(lastline[7].split('{')[0]))
+                    NounDif = abs(NounCount - (int)(lastline[8].split('{')[0]))
+                blocksSheet.write(blockSheetRow, 5,verbDif)
+                blocksSheet.write(blockSheetRow, 6,NounDif)
+                if(verbDif == 0 and NounDif == 0):
+                    blocksSheet.write(blockSheetRow, 7,1)
+                else:
+                    blocksSheet.write(blockSheetRow, 7,0)
+
+            blockSheetRow+=1
+            resetWords()
 
 
         addWord(dataArr[2])
-        user = dataArr[0]
         switchSheetRow+=1
         continue
 
-
-
+    addWord(dataArr[2])
     if(dataArr[1] == '1'): #if it is first experiment
         if(dataArr[2] == 'Neut' and dataArr[3] == 'Neut'):
             switchSheet.write(switchSheetRow, 0, 0)
