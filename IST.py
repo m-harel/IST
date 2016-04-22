@@ -3,7 +3,6 @@ import xlsxwriter
 workbook = xlsxwriter.Workbook('ParsedData.xlsx')
 switchSheet = workbook.add_worksheet('Switch')
 blocksSheet = workbook.add_worksheet('Blocks')
-f = open('text.txt','r', encoding='utf-16-le')
 
 #mata data for switch sheet
 switchSheet.write(0, 0, 'switch')
@@ -34,7 +33,38 @@ blocksSheet.write(0, 5, 'Verb difference')
 blocksSheet.write(0, 6, 'Noun difference')
 blocksSheet.write(0, 7, 'Accuracy')
 
+f = open('text.txt','r', encoding='utf-16-le')
 lines = f.readlines()
+
+#place of the relevant varibels
+subjectPlace = -1
+sessionPlace = -1
+stimCatPlace = -1
+lastCategoryPlace = -1
+questionOneTypePlace = -1
+questionTwoAnswerPlace = -1
+questionOneAnswerPlace = -1
+
+varNameLine = lines[1].split()
+
+varNumber = 0
+for var in varNameLine:
+    if(var == 'Subject'):
+        subjectPlace = varNumber
+    elif(var == 'Session'):
+        sessionPlace = varNumber
+    elif(var == 'StimCat'):
+        stimCatPlace = varNumber
+    elif(var == 'LactCategory'): #the misspelling in origin
+        lastCategoryPlace = varNumber
+    elif(var == 'Q1SlidePath'):
+        questionOneTypePlace = varNumber
+    elif(var == 'Q2Slide.RESP'):
+        questionTwoAnswerPlace = varNumber
+    elif(var == 'Q1Slide.RESP'):
+        questionOneAnswerPlace = varNumber
+    varNumber+=1
+
 lastline = []
 
 #block sheet variables:
@@ -79,23 +109,23 @@ for line in lines[2:]:
     dataArr = line.split()
     if(len(dataArr) < 3): #ignore start block line
         continue
-    if(dataArr[3] == '.'): #if it is dammie
+    if(dataArr[lastCategoryPlace] == '.'): #if it is dammie
         if(len(lastline) > 1) : #if it's not the first blcok
-            if((int)(user) == (int)(lastline[0])):
+            if((int)(user) == (int)(lastline[subjectPlace])):
                 block += 1
             else:
-                user = (int)(lastline[0])
+                user = (int)(lastline[subjectPlace])
                 block = 1
             blocksSheet.write(blockSheetRow, 0, user)
             blocksSheet.write(blockSheetRow, 1, (int)(lastline[1]))
             blocksSheet.write(blockSheetRow, 2,block)
-            if(lastline[1]=="1"): #Emo/Neut
-                if(lastline[6] == 'Stimuli/Instructions/Slide1.png'): #first question is abuot emo
-                    EmoDif = abs(EmoCount - (int)(lastline[8].split('{')[0]))
-                    NeutDif = abs(NeutCount - (int)(lastline[7].split('{')[0]))
+            if(lastline[sessionPlace]=="1"): #Emo/Neut
+                if(lastline[questionOneTypePlace] == 'Stimuli/Instructions/Slide1.png'): #first question is abuot emo
+                    EmoDif = abs(EmoCount - (int)(lastline[questionOneAnswerPlace].split('{')[0]))
+                    NeutDif = abs(NeutCount - (int)(lastline[questionTwoAnswerPlace].split('{')[0]))
                 else:
-                    EmoDif = abs(EmoCount - (int)(lastline[7].split('{')[0]))
-                    NeutDif = abs(NeutCount - (int)(lastline[8].split('{')[0]))
+                    EmoDif = abs(EmoCount - (int)(lastline[questionTwoAnswerPlace].split('{')[0]))
+                    NeutDif = abs(NeutCount - (int)(lastline[questionOneAnswerPlace].split('{')[0]))
                 blocksSheet.write(blockSheetRow, 3,EmoDif)
                 blocksSheet.write(blockSheetRow, 4,NeutDif)
                 if(EmoDif == 0 and NeutDif == 0):
@@ -104,12 +134,12 @@ for line in lines[2:]:
                     blocksSheet.write(blockSheetRow, 7,0)
 
             else:  #Verb/Noun
-                if(lastline[6] == 'Stimuli/Instructions/Slide3.png'): #first question is about verb
-                    verbDif = abs(VerbCount - (int)(lastline[8].split('{')[0]))
-                    NounDif = abs(NounCount - (int)(lastline[7].split('{')[0]))
+                if(lastline[questionOneTypePlace] == 'Stimuli/Instructions/Slide3.png'): #first question is about verb
+                    verbDif = abs(VerbCount - (int)(lastline[questionOneAnswerPlace].split('{')[0]))
+                    NounDif = abs(NounCount - (int)(lastline[questionTwoAnswerPlace].split('{')[0]))
                 else:
-                    verbDif = abs(VerbCount - (int)(lastline[7].split('{')[0]))
-                    NounDif = abs(NounCount - (int)(lastline[8].split('{')[0]))
+                    verbDif = abs(VerbCount - (int)(lastline[questionTwoAnswerPlace].split('{')[0]))
+                    NounDif = abs(NounCount - (int)(lastline[questionOneAnswerPlace].split('{')[0]))
                 blocksSheet.write(blockSheetRow, 5,verbDif)
                 blocksSheet.write(blockSheetRow, 6,NounDif)
                 if(verbDif == 0 and NounDif == 0):
@@ -121,28 +151,30 @@ for line in lines[2:]:
             resetWords()
 
 
-        addWord(dataArr[2])
+        addWord(dataArr[stimCatPlace])
         switchSheetRow+=1
         continue
 
-    addWord(dataArr[2])
-    if(dataArr[1] == '1'): #if it is first experiment
-        if(dataArr[2] == 'Neut' and dataArr[3] == 'Neut'):
+    #from here - handle step
+    addWord(dataArr[stimCatPlace])
+
+    if(dataArr[sessionPlace] == '1'): #if it is first experiment
+        if(dataArr[stimCatPlace] == 'Neut' and dataArr[lastCategoryPlace] == 'Neut'):
             switchSheet.write(switchSheetRow, 0, 0)
             switchSheet.write(switchSheetRow, 1, 1)
-        elif(dataArr[2] == 'Neut' and dataArr[3] == 'Emo'):
+        elif(dataArr[stimCatPlace] == 'Neut' and dataArr[lastCategoryPlace] == 'Emo'):
             switchSheet.write(switchSheetRow, 0, 1)
             switchSheet.write(switchSheetRow, 1, 2)
-        elif(dataArr[2] == 'Emo' and dataArr[3] == 'Emo'):
+        elif(dataArr[stimCatPlace] == 'Emo' and dataArr[lastCategoryPlace] == 'Emo'):
             switchSheet.write(switchSheetRow, 0, 0)
             switchSheet.write(switchSheetRow, 1, 3)
-        elif(dataArr[2] == 'Emo' and dataArr[3] == 'Neut'):
+        elif(dataArr[stimCatPlace] == 'Emo' and dataArr[lastCategoryPlace] == 'Neut'):
             switchSheet.write(switchSheetRow, 0, 1)
             switchSheet.write(switchSheetRow, 1, 4)
         else:
             print("error!!!")
     else:
-        if(dataArr[2] == dataArr[3]):
+        if(dataArr[stimCatPlace] == dataArr[lastCategoryPlace]):
             switchSheet.write(switchSheetRow, 0, 0)
         else:
             switchSheet.write(switchSheetRow, 0, 1)
