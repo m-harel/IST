@@ -1,37 +1,25 @@
 import xlsxwriter
+import Title_format_IST
+import Mean
 
 workbook = xlsxwriter.Workbook('ParsedData.xlsx')
+merge_format = workbook.add_format({
+    'bold': 1,
+    'border': 1,
+    'align': 'center',
+    'valign': 'vcenter'})
+
 switchSheet = workbook.add_worksheet('Switch')
 blocksSheet = workbook.add_worksheet('Blocks')
+timingSheet = workbook.add_worksheet('Timing')
 
-#mata data for switch sheet
-switchSheet.write(0, 0, 'switch')
-switchSheet.write(0, 1, 'type')
 
-switchSheet.write(0,4,'num')
-switchSheet.write(0,5,'type')
 
-switchSheet.write(1,4,1)
-switchSheet.write(1,5,'Neut - Neut')
+#add titles for all the sheets
+Title_format_IST.SwitchSheetTitles(switchSheet)
+Title_format_IST.blocksSheetTitles(blocksSheet)
+Title_format_IST.timingSheetTitles(timingSheet,merge_format)
 
-switchSheet.write(2,4,2)
-switchSheet.write(2,5,'Neut - Emo')
-
-switchSheet.write(3,4,3)
-switchSheet.write(3,5,'Emo - Emo')
-
-switchSheet.write(4,4,4)
-switchSheet.write(4,5,'Emo - Neut')
-
-#mata data for blocks sheet
-blocksSheet.write(0, 0, 'User number')
-blocksSheet.write(0, 1, 'version')
-blocksSheet.write(0, 2, 'block number')
-blocksSheet.write(0, 3, 'Neut difference')
-blocksSheet.write(0, 4, 'Emo difference')
-blocksSheet.write(0, 5, 'Verb difference')
-blocksSheet.write(0, 6, 'Noun difference')
-blocksSheet.write(0, 7, 'Accuracy')
 
 f = open('text.txt','r', encoding='utf-16-le')
 lines = f.readlines()
@@ -41,6 +29,7 @@ subjectPlace = -1
 sessionPlace = -1
 stimCatPlace = -1
 lastCategoryPlace = -1
+timingPlace = -1
 questionOneTypePlace = -1
 questionTwoAnswerPlace = -1
 questionOneAnswerPlace = -1
@@ -57,6 +46,8 @@ for var in varNameLine:
         stimCatPlace = varNumber
     elif(var == 'LactCategory'): #the misspelling in origin
         lastCategoryPlace = varNumber
+    elif(var == 'StimTextDisp.RT'):
+        timingPlace = varNumber
     elif(var == 'Q1SlidePath'):
         questionOneTypePlace = varNumber
     elif(var == 'Q2Slide.RESP'):
@@ -75,6 +66,18 @@ EmoCount = 0
 VerbCount = 0
 NounCount = 0
 blockSheetRow = 1
+
+#timing sheet variables:
+neutral_S = Mean.Mean()
+neutral_NS = Mean.Mean()
+emotional_NN = Mean.Mean()
+emotional_NE = Mean.Mean()
+emotional_EN = Mean.Mean()
+emotional_EE = Mean.Mean()
+emotional_S = Mean.Mean()
+emotional_NS = Mean.Mean()
+current_user = -1
+timingSheetRow = 2
 
 def resetWords():
     global NeutCount
@@ -107,7 +110,22 @@ switchSheetRow = 1
 
 for line in lines[2:]:
     dataArr = line.split()
-    if(len(dataArr) < 3): #ignore start block line
+    if(len(dataArr) < 3): #start of a block. here we can find the user id replace
+        if((int)(user) is not current_user): #if user ended
+            if(current_user is not -1): #if it's not the first user
+                timingSheet.write(timingSheetRow,0, current_user)
+                timingSheet.write(timingSheetRow,1, neutral_S.getMean())
+                timingSheet.write(timingSheetRow,2, neutral_NS.getMean())
+                timingSheet.write(timingSheetRow,3, neutral_S.getMean(1) - neutral_NS.getMean(1))
+                timingSheet.write(timingSheetRow,4, emotional_NN.getMean(1))
+                timingSheet.write(timingSheetRow,5, emotional_NE.getMean(1))
+                timingSheet.write(timingSheetRow,6, emotional_EN.getMean(1))
+                timingSheet.write(timingSheetRow,7, emotional_EE.getMean(1))
+                timingSheet.write(timingSheetRow,8, emotional_S.getMean())
+                timingSheet.write(timingSheetRow,9, emotional_NS.getMean())
+                timingSheet.write(timingSheetRow,10, emotional_S.getMean(1) - emotional_NS.getMean(1))
+                timingSheetRow += 1
+            current_user = (int)(user)
         continue
     if(dataArr[lastCategoryPlace] == '.'): #if it is dammie
         if(len(lastline) > 1) : #if it's not the first blcok
@@ -162,22 +180,32 @@ for line in lines[2:]:
         if(dataArr[stimCatPlace] == 'Neut' and dataArr[lastCategoryPlace] == 'Neut'):
             switchSheet.write(switchSheetRow, 0, 0)
             switchSheet.write(switchSheetRow, 1, 1)
+            emotional_NN.add((int)(dataArr[timingPlace]))
+            emotional_NS.add((int)(dataArr[timingPlace]))
         elif(dataArr[stimCatPlace] == 'Neut' and dataArr[lastCategoryPlace] == 'Emo'):
             switchSheet.write(switchSheetRow, 0, 1)
             switchSheet.write(switchSheetRow, 1, 2)
+            emotional_NE.add((int)(dataArr[timingPlace]))
+            emotional_S.add((int)(dataArr[timingPlace]))
         elif(dataArr[stimCatPlace] == 'Emo' and dataArr[lastCategoryPlace] == 'Emo'):
             switchSheet.write(switchSheetRow, 0, 0)
             switchSheet.write(switchSheetRow, 1, 3)
+            emotional_EE.add((int)(dataArr[timingPlace]))
+            emotional_NS.add((int)(dataArr[timingPlace]))
         elif(dataArr[stimCatPlace] == 'Emo' and dataArr[lastCategoryPlace] == 'Neut'):
             switchSheet.write(switchSheetRow, 0, 1)
             switchSheet.write(switchSheetRow, 1, 4)
+            emotional_EN.add((int)(dataArr[timingPlace]))
+            emotional_S.add((int)(dataArr[timingPlace]))
         else:
             print("error!!!")
     else:
         if(dataArr[stimCatPlace] == dataArr[lastCategoryPlace]):
             switchSheet.write(switchSheetRow, 0, 0)
+            neutral_NS.add((int)(dataArr[timingPlace]))
         else:
             switchSheet.write(switchSheetRow, 0, 1)
+            neutral_S.add((int)(dataArr[timingPlace]))
     lastline = dataArr
     switchSheetRow+=1
 f.close()
