@@ -81,9 +81,9 @@ class Excel:
             self.switchSheetRow += 1
             return
         if(question.isSwitch()):
-            self.switchSheet.write(self.switchSheetRow, 0, 0)
+            self.switchSheet.write(self.switchSheetRow, 0, 1)
         else:
-             self.switchSheet.write(self.switchSheetRow, 0, 1)
+             self.switchSheet.write(self.switchSheetRow, 0, 0)
         if(question.type == '1'):
             if(question.category == 'Neut'):
                 if(question.lastCategory == 'Neut'):

@@ -12,8 +12,9 @@
 //variables_name_line - the line in the file where all the variables names
 //excel_file - the name of the excel file to send the data
 
+//encoding options: utf-8, utf-16-le
 version: 0.0.1
-data_file:sub101-167(2).txt
+data_file:CogConForMatan101-167.txt
 encoding:utf-16-le
-variables_name_line: 4
+variables_name_line:1
 excel_file:ParsedData.xlsx

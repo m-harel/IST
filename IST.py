@@ -9,6 +9,7 @@ settings.readSettingsFile()
 dataFile = open(settings.dataFileName,'r',encoding=settings.dataFileEncoding)
 dataFileLines = dataFile.readlines()
 
+
 interpreter = Interpreter.Interpreter(dataFileLines[settings.dataFileVariablesLine])
 
 excelFile = Excel.Excel(settings.excelFileName)
