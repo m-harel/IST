@@ -1,7 +1,3 @@
-import xlsxwriter
-
-
-
 
 def SwitchSheetTitles(workSheet):
     workSheet.write(0, 0, 'switch')

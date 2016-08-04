@@ -1,0 +1,19 @@
+//About:
+//IST-Thalia master-settings file 
+//Author - Matan Harel
+//Last updated - 3.8.2016
+//This file is required for the operation of the IST software
+
+//how to use:
+//setting file line structure - [var_name]:[value]
+//version - for future need
+//data_file - the name of the file the software should analyse
+//encoding - the file encoding
+//variables_name_line - the line in the file where all the variables names
+//excel_file - the name of the excel file to send the data
+
+version: 0.0.1
+data_file:sub101-167(2).txt
+encoding:utf-16-le
+variables_name_line: 4
+excel_file:ParsedData.xlsx

@@ -1,6 +1,7 @@
 class Mean:
-    count = 0
-    sum = 0
+    def __init__(self):
+        self.count = 0
+        self.sum = 0
     def getMean(self,reset = 0):
         if self.count == 0:
             return 'N\A'
@@ -14,3 +15,8 @@ class Mean:
     def add(self, num):
         self.count += 1
         self.sum += num
+
+    def __sub__(self, other):
+        if(self.count == 0 or other.count == 0):
+            return 'N\A'
+        return self.getMean(1) - other.getMean(1)
