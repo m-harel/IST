@@ -15,8 +15,6 @@ excelFile = Excel.Excel(settings.excelFileName)
 
 users = []
 
-
-print('Start read data file...', end='')
 for line in dataFileLines[settings.dataFileVariablesLine+1:]:
     question = interpreter.interprete(line)
     if(question == None):
@@ -30,14 +28,8 @@ for line in dataFileLines[settings.dataFileVariablesLine+1:]:
 
 dataFile.close()
 
-print('end')
-print('The number of users is' + (str)(len(users)))
-
-print('write to excel file')
-
 for user in users:
     excelFile.printUser(user)
 
 excelFile.close()
-print('end')
 

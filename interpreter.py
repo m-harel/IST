@@ -5,7 +5,6 @@ class Interpreter:
     mustExistVariables = ['Subject','Session','StimCat','LactCategory','StimTextDisp.RT','Q1SlidePath','Q2Slide.RESP','Q1Slide.RESP']
     variables = []
     def __init__(self,line):
-        print(line)
         self.variables = line.split()
         for var in self.mustExistVariables:
             if(not (var in self.variables)):
