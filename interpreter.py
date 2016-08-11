@@ -1,5 +1,5 @@
 #interpreter a line to question
-import Question
+import Trail
 
 class Interpreter:
     mustExistVariables = ['Subject','Session','StimCat','LactCategory','StimTextDisp.RT','Q1SlidePath','Q2Slide.RESP','Q1Slide.RESP']
@@ -8,7 +8,7 @@ class Interpreter:
         if(line.startswith('\ufeff')):
             line= line[1:]
         self.variables = line.split()
-    
+
         for var in Interpreter.mustExistVariables:
             if(not (var in self.variables)):
                 print('a must exist variables missed - ' + var)
@@ -23,14 +23,14 @@ class Interpreter:
         lineVariables = line.split()
         if(len(lineVariables) < 4 or lineVariables[2] == 'NULL' or lineVariables[2] == ''):
             return None
-        question = Question.Question()
-        question.userId = lineVariables[self.variables.index('Subject')]
-        question.type = lineVariables[self.variables.index('Session')]
-        question.category = lineVariables[self.variables.index('StimCat')]
-        question.lastCategory = lineVariables[self.variables.index('LactCategory')]
-        question.timing = int(lineVariables[self.variables.index('StimTextDisp.RT')])
-        question.firstQuestionSlide = lineVariables[self.variables.index('Q1SlidePath')][-4]
-        question.firstQuestionAnswer = self.questionResponse(lineVariables[self.variables.index('Q1Slide.RESP')])
-        question.secondQuestionAnswer = self.questionResponse(lineVariables[self.variables.index('Q2Slide.RESP')])
+        trail = Trail.Trial()
+        trail.userId = lineVariables[self.variables.index('Subject')]
+        trail.type = lineVariables[self.variables.index('Session')]
+        trail.category = lineVariables[self.variables.index('StimCat')]
+        trail.lastCategory = lineVariables[self.variables.index('LactCategory')]
+        trail.timing = int(lineVariables[self.variables.index('StimTextDisp.RT')])
+        trail.firstQuestionSlide = lineVariables[self.variables.index('Q1SlidePath')][-4]
+        trail.firstQuestionAnswer = self.questionResponse(lineVariables[self.variables.index('Q1Slide.RESP')])
+        trail.secondQuestionAnswer = self.questionResponse(lineVariables[self.variables.index('Q2Slide.RESP')])
 
-        return question
+        return trail

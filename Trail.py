@@ -1,5 +1,4 @@
-#Question is the basic data of the system. each line in the file represent one question
-class Question:
+class Trial:
     def isDummy(self):
         if(self.lastCategory == '.'):
             return True

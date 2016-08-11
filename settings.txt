@@ -13,7 +13,7 @@
 //excel_file - the name of the excel file to send the data
 
 //encoding options: utf-8, utf-16-le
-version: 0.0.1
+version:0.0.1
 data_file:CogConForMatan101-167.txt
 encoding:utf-16-le
 variables_name_line:1

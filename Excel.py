@@ -37,7 +37,7 @@ class Excel:
         self.timingSheetRow += 1
 
         for block in user.blocks:
-            if(len(block.questions) == 0):
+            if(len(block.trials) == 0):
                 continue
             self.printBlock(block)
 
@@ -46,12 +46,12 @@ class Excel:
         self.blocksSheet.write(self.blockSheetRow, 1, block.type)
         self.blocksSheet.write(self.blockSheetRow, 2, block.id)
         if(block.type == '1'):
-            if(block.questions[0].firstQuestionSlide == '1'):
-                emoDiff = abs(block.emoCount -  block.questions[0].firstQuestionAnswer)
-                neutDiff = abs(block.neutCount - block.questions[0].secondQuestionAnswer)
+            if(block.trials[0].firstQuestionSlide == '1'):
+                emoDiff = abs(block.emoCount -  block.trials[0].firstQuestionAnswer)
+                neutDiff = abs(block.neutCount - block.trials[0].secondQuestionAnswer)
             else:
-                emoDiff = abs(block.emoCount -  block.questions[0].secondQuestionAnswer)
-                neutDiff = abs(block.neutCount - block.questions[0].firstQuestionAnswer)
+                emoDiff = abs(block.emoCount -  block.trials[0].secondQuestionAnswer)
+                neutDiff = abs(block.neutCount - block.trials[0].firstQuestionAnswer)
             self.blocksSheet.write(self.blockSheetRow, 3,emoDiff)
             self.blocksSheet.write(self.blockSheetRow, 4,neutDiff)
             if(emoDiff == 0 and neutDiff == 0):
@@ -59,12 +59,12 @@ class Excel:
             else:
                 self.blocksSheet.write(self.blockSheetRow, 7,0)
         else:
-            if(block.questions[0].firstQuestionSlide == '3'):
-                verbDiff = abs(block.verbCount -  block.questions[0].firstQuestionAnswer)
-                nounDiff = abs(block.nounCount - block.questions[0].secondQuestionAnswer)
+            if(block.trials[0].firstQuestionSlide == '3'):
+                verbDiff = abs(block.verbCount -  block.trials[0].firstQuestionAnswer)
+                nounDiff = abs(block.nounCount - block.trials[0].secondQuestionAnswer)
             else:
-                verbDiff = abs(block.verbCount -  block.questions[0].secondQuestionAnswer)
-                nounDiff = abs(block.nounCount - block.questions[0].firstQuestionAnswer)
+                verbDiff = abs(block.verbCount -  block.trials[0].secondQuestionAnswer)
+                nounDiff = abs(block.nounCount - block.trials[0].firstQuestionAnswer)
             self.blocksSheet.write(self.blockSheetRow, 5,verbDiff)
             self.blocksSheet.write(self.blockSheetRow, 6,nounDiff)
             if(verbDiff == 0 and nounDiff == 0):
@@ -73,25 +73,25 @@ class Excel:
                 self.blocksSheet.write(self.blockSheetRow, 7,0)
         self.blockSheetRow += 1
 
-        for question in block.questions:
-            self.printQuestion(question)
+        for trial in block.trials:
+            self.printTrail(trial)
 
-    def printQuestion(self,question):
-        if(question.isDummy()):
+    def printTrail(self,trial):
+        if(trial.isDummy()):
             self.switchSheetRow += 1
             return
-        if(question.isSwitch()):
+        if(trial.isSwitch()):
             self.switchSheet.write(self.switchSheetRow, 0, 1)
         else:
              self.switchSheet.write(self.switchSheetRow, 0, 0)
-        if(question.type == '1'):
-            if(question.category == 'Neut'):
-                if(question.lastCategory == 'Neut'):
+        if(trial.type == '1'):
+            if(trial.category == 'Neut'):
+                if(trial.lastCategory == 'Neut'):
                     self.switchSheet.write(self.switchSheetRow, 1, 1)
                 else:
                     self.switchSheet.write(self.switchSheetRow, 1, 2)
             else:
-                if(question.lastCategory == 'Neut'):
+                if(trial.lastCategory == 'Neut'):
                     self.switchSheet.write(self.switchSheetRow, 1, 4)
                 else:
                     self.switchSheet.write(self.switchSheetRow, 1, 3)
@@ -131,16 +131,16 @@ class Excel:
         self.timingSheet.merge_range('E1:K1', 'Emotional version', self.merge_format)
 
         self.timingSheet.write(1,0, 'subject id')
-        self.timingSheet.write(1,1, 'S')
-        self.timingSheet.write(1,2, 'NS')
-        self.timingSheet.write(1,3, 'ISC')
-        self.timingSheet.write(1,4, 'N-N')
-        self.timingSheet.write(1,5, 'N-E')
-        self.timingSheet.write(1,6, 'E-N')
-        self.timingSheet.write(1,7, 'E-E')
-        self.timingSheet.write(1,8, 'S')
-        self.timingSheet.write(1,9, 'NS')
-        self.timingSheet.write(1,10, 'ISC')
+        self.timingSheet.write(1,1, 'S - Neutral')
+        self.timingSheet.write(1,2, 'NS - Neutral')
+        self.timingSheet.write(1,3, 'ISC - Neutral')
+        self.timingSheet.write(1,4, 'N-N - Emotinal')
+        self.timingSheet.write(1,5, 'N-E - Emotinal')
+        self.timingSheet.write(1,6, 'E-N - Emotinal')
+        self.timingSheet.write(1,7, 'E-E - Emotinal')
+        self.timingSheet.write(1,8, 'S - Emotinal')
+        self.timingSheet.write(1,9, 'NS - Emotinal')
+        self.timingSheet.write(1,10, 'ISC - Emotinal')
 
     def close(self):
         self.workbook.close()

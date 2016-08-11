@@ -15,28 +15,33 @@ class user:
         self.emotional_NS = Mean.Mean() #no switch
         self.blocks = []
 
-    def addQuestion(self,question):
-        if(question.isDummy()):
-            self.blocks.append(Block.Block(self.id, len(self.blocks) + 1, question.type))
-        self.blocks[-1].addQuestion(question)
+    def addTrail(self, trail):
+        if(trail.isDummy()):
+            self.blocks.append(Block.Block(self.id, len(self.blocks) + 1, trail.type))
+        self.blocks[-1].addTrail(trail)
 
-        if(question.type == '1'):
-            if(question.category == 'Neut'):
-                if(question.lastCategory == 'Neut'):
-                    self.emotional_NN.add(question.timing)
-                    self.emotional_NS.add(question.timing)
-                else:
-                    self.emotional_NE.add(question.timing)
-                    self.emotional_S.add(question.timing)
-            else:
-                if(question.lastCategory == 'Neut'):
-                    self.emotional_EN.add(question.timing)
-                    self.emotional_S.add(question.timing)
-                else:
-                    self.emotional_EE.add(question.timing)
-                    self.emotional_NS.add(question.timing)
-        elif(question.type == '2'):
-            if(question.isSwitch()):
-                self.neutral_S.add(question.timing)
-            else:
-                self.neutral_NS.add(question.timing)
+    def getStandradMeans(self,standard):
+        for block in self.blocks:
+            for trail in block.trials:
+                if(trail.standard < standard):
+                    if(trail.type == '1'):
+                        if(trail.category == 'Neut'):
+                            if(trail.lastCategory == 'Neut'):
+                                self.emotional_NN.add(trail.timing)
+                                self.emotional_NS.add(trail.timing)
+                            else:
+                                self.emotional_NE.add(trail.timing)
+                                self.emotional_S.add(trail.timing)
+                        else:
+                            if(trail.lastCategory == 'Neut'):
+                                self.emotional_EN.add(trail.timing)
+                                self.emotional_S.add(trail.timing)
+                            else:
+                                self.emotional_EE.add(trail.timing)
+                                self.emotional_NS.add(trail.timing)
+                    elif(trail.type == '2'):
+                        if(trail.isSwitch()):
+                            self.neutral_S.add(trail.timing)
+                        else:
+                            self.neutral_NS.add(trail.timing)
+

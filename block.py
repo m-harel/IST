@@ -8,7 +8,7 @@ class Block:
         self.verbCount = 0
         self.nounCount = 0
 
-        self.questions = []
+        self.trials = []
 
     def addWord(self,word):
         if(word == 'Neut'):
@@ -22,6 +22,26 @@ class Block:
         else:
             print("unknown - " + word)
 
-    def addQuestion(self,question):
-        self.questions.append(question)
-        self.addWord(question.category)
+    def addTrail(self, trail):
+        self.trials.append(trail)
+        self.addWord(trail.category)
+
+    def findMean(self):
+        sum = 0
+        for trail in self.trials:
+            sum += trail.timing
+
+        self.mean = sum / len(self.trials)
+
+
+    def findStandardDeviation(self):
+        if(not hasattr(self, 'mean')):
+            self.findMean()
+        sum = 0
+        for trail in self.trials:
+            sum += (trail.timing - self.mean)**2
+
+        self.standardDeviation = (sum/len(self.trials)) ** 0.5
+
+        for trail in self.trials:
+            trail.standard = abs(trail.timing - self.mean) /self.standardDeviation
