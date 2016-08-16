@@ -1,4 +1,5 @@
 import xlsxwriter
+import datetime
 
 class Excel:
     timingSheetRow = 2
@@ -13,27 +14,31 @@ class Excel:
             'align': 'center',
             'valign': 'vcenter'})
 
-        self.switchSheet = self.workbook.add_worksheet('Switch')
+        self.metaSheet = self.workbook.add_worksheet('Meta data')
+        self.trailsSheet = self.workbook.add_worksheet('Trails')
         self.blocksSheet = self.workbook.add_worksheet('Blocks')
-        self.timingSheet = self.workbook.add_worksheet('Timing')
+        self.usersSheet = self.workbook.add_worksheet('Users')
 
         #add titles for all the sheets
-        self.SwitchSheetTitles()
+        self.metaSheetTitles()
+        self.trailsSheetTitles()
         self.blocksSheetTitles()
-        self.timingSheetTitles()
+        self.usersSheetTitles()
 
     def printUser(self,user):
-        self.timingSheet.write(self.timingSheetRow,0, user.id)
-        self.timingSheet.write(self.timingSheetRow,1, user.neutral_S.getMean())
-        self.timingSheet.write(self.timingSheetRow,2, user.neutral_NS.getMean())
-        self.timingSheet.write(self.timingSheetRow,3, user.neutral_S - user.neutral_NS)
-        self.timingSheet.write(self.timingSheetRow,4, user.emotional_NN.getMean(1))
-        self.timingSheet.write(self.timingSheetRow,5, user.emotional_NE.getMean(1))
-        self.timingSheet.write(self.timingSheetRow,6, user.emotional_EN.getMean(1))
-        self.timingSheet.write(self.timingSheetRow,7, user.emotional_EE.getMean(1))
-        self.timingSheet.write(self.timingSheetRow,8, user.emotional_S.getMean())
-        self.timingSheet.write(self.timingSheetRow,9, user.emotional_NS.getMean())
-        self.timingSheet.write(self.timingSheetRow,10, user.emotional_S - user.emotional_NS)
+        self.usersSheet.write(self.timingSheetRow, 0, user.id)
+        self.usersSheet.write(self.timingSheetRow, 1, user.neutral_S.getMean())
+        self.usersSheet.write(self.timingSheetRow, 2, user.neutral_NS.getMean())
+        self.usersSheet.write(self.timingSheetRow, 3, user.neutral_S - user.neutral_NS)
+        self.usersSheet.write(self.timingSheetRow, 4, user.emotional_NN.getMean(1))
+        self.usersSheet.write(self.timingSheetRow, 5, user.emotional_NE.getMean(1))
+        self.usersSheet.write(self.timingSheetRow, 6, user.emotional_EN.getMean(1))
+        self.usersSheet.write(self.timingSheetRow, 7, user.emotional_EE.getMean(1))
+        self.usersSheet.write(self.timingSheetRow, 8, user.emotional_S.getMean())
+        self.usersSheet.write(self.timingSheetRow, 9, user.emotional_NS.getMean())
+        self.usersSheet.write(self.timingSheetRow, 10, user.emotional_S - user.emotional_NS)
+        self.usersSheet.write(self.timingSheetRow, 11, user.mean)
+        self.usersSheet.write(self.timingSheetRow, 12, user.standardDeviation)
         self.timingSheetRow += 1
 
         for block in user.blocks:
@@ -77,44 +82,59 @@ class Excel:
             self.printTrail(trial)
 
     def printTrail(self,trial):
+        self.trailsSheet.write(self.switchSheetRow, 0, trial.userId)
+        self.trailsSheet.write(self.switchSheetRow, 1, trial.timing)
         if(trial.isDummy()):
             self.switchSheetRow += 1
             return
+
         if(trial.isSwitch()):
-            self.switchSheet.write(self.switchSheetRow, 0, 1)
+            self.trailsSheet.write(self.switchSheetRow, 2, 1)
         else:
-             self.switchSheet.write(self.switchSheetRow, 0, 0)
+             self.trailsSheet.write(self.switchSheetRow, 2, 0)
         if(trial.type == '1'):
             if(trial.category == 'Neut'):
                 if(trial.lastCategory == 'Neut'):
-                    self.switchSheet.write(self.switchSheetRow, 1, 1)
+                    self.trailsSheet.write(self.switchSheetRow, 3, 1)
                 else:
-                    self.switchSheet.write(self.switchSheetRow, 1, 2)
+                    self.trailsSheet.write(self.switchSheetRow, 3, 2)
             else:
                 if(trial.lastCategory == 'Neut'):
-                    self.switchSheet.write(self.switchSheetRow, 1, 4)
+                    self.trailsSheet.write(self.switchSheetRow, 3, 4)
                 else:
-                    self.switchSheet.write(self.switchSheetRow, 1, 3)
+                    self.trailsSheet.write(self.switchSheetRow, 3, 3)
+
+        self.trailsSheet.write(self.switchSheetRow, 4, trial.standard)
+
         self.switchSheetRow += 1
 
-    def SwitchSheetTitles(self):
-        self.switchSheet.write(0, 0, 'switch')
-        self.switchSheet.write(0, 1, 'type')
 
-        self.switchSheet.write(0,4,'num')
-        self.switchSheet.write(0,5,'type')
+    def metaSheetTitles(self):
+        self.metaSheet.write(0,0, 'created at')
+        self.metaSheet.write(0,1, datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y"))
 
-        self.switchSheet.write(1,4,1)
-        self.switchSheet.write(1,5,'Neut - Neut')
+        self.metaSheet.merge_range('G1:H1', 'trail switch index', self.merge_format)
+        self.metaSheet.write(1, 6, 'num')
+        self.metaSheet.write(1, 7, 'type')
 
-        self.switchSheet.write(2,4,2)
-        self.switchSheet.write(2,5,'Neut - Emo')
+        self.metaSheet.write(2, 6, 1)
+        self.metaSheet.write(2, 7, 'Neut - Neut')
 
-        self.switchSheet.write(3,4,3)
-        self.switchSheet.write(3,5,'Emo - Emo')
+        self.metaSheet.write(3, 6, 2)
+        self.metaSheet.write(3, 7, 'Neut - Emo')
 
-        self.switchSheet.write(4,4,4)
-        self.switchSheet.write(4,5,'Emo - Neut')
+        self.metaSheet.write(4, 6, 3)
+        self.metaSheet.write(4, 7, 'Emo - Emo')
+
+        self.metaSheet.write(5, 6, 4)
+        self.metaSheet.write(5, 7, 'Emo - Neut')
+
+    def trailsSheetTitles(self):
+        self.trailsSheet.write(0, 0, 'User id')
+        self.trailsSheet.write(0, 1, 'RT')
+        self.trailsSheet.write(0, 2, 'Switch')
+        self.trailsSheet.write(0, 3, 'Type')
+        self.trailsSheet.write(0, 4, 'standard deviations')
 
     def blocksSheetTitles(self):
         self.blocksSheet.write(0, 0, 'User number')
@@ -126,21 +146,24 @@ class Excel:
         self.blocksSheet.write(0, 6, 'Noun difference')
         self.blocksSheet.write(0, 7, 'Accuracy')
 
-    def timingSheetTitles(self):
-        self.timingSheet.merge_range('B1:D1', 'Neutral version', self.merge_format)
-        self.timingSheet.merge_range('E1:K1', 'Emotional version', self.merge_format)
+    def usersSheetTitles(self):
+        self.usersSheet.merge_range('B1:D1', 'Neutral version', self.merge_format)
+        self.usersSheet.merge_range('E1:K1', 'Emotional version', self.merge_format)
 
-        self.timingSheet.write(1,0, 'subject id')
-        self.timingSheet.write(1,1, 'S - Neutral')
-        self.timingSheet.write(1,2, 'NS - Neutral')
-        self.timingSheet.write(1,3, 'ISC - Neutral')
-        self.timingSheet.write(1,4, 'N-N - Emotinal')
-        self.timingSheet.write(1,5, 'N-E - Emotinal')
-        self.timingSheet.write(1,6, 'E-N - Emotinal')
-        self.timingSheet.write(1,7, 'E-E - Emotinal')
-        self.timingSheet.write(1,8, 'S - Emotinal')
-        self.timingSheet.write(1,9, 'NS - Emotinal')
-        self.timingSheet.write(1,10, 'ISC - Emotinal')
+        self.usersSheet.write(1, 0, 'subject id')
+        self.usersSheet.write(1, 1, 'S - Neutral')
+        self.usersSheet.write(1, 2, 'NS - Neutral')
+        self.usersSheet.write(1, 3, 'ISC - Neutral')
+        self.usersSheet.write(1, 4, 'N-N - Emotinal')
+        self.usersSheet.write(1, 5, 'N-E - Emotinal')
+        self.usersSheet.write(1, 6, 'E-N - Emotinal')
+        self.usersSheet.write(1, 7, 'E-E - Emotinal')
+        self.usersSheet.write(1, 8, 'S - Emotinal')
+        self.usersSheet.write(1, 9, 'NS - Emotinal')
+        self.usersSheet.write(1, 10, 'ISC - Emotinal')
+
+        self.usersSheet.write(1, 11, 'Mean')
+        self.usersSheet.write(1, 11, 'Standard deviation')
 
     def close(self):
         self.workbook.close()

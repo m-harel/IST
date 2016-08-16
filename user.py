@@ -23,7 +23,7 @@ class user:
     def getStandradMeans(self,standard):
         for block in self.blocks:
             for trail in block.trials:
-                if(trail.standard < standard):
+                if(not trail.isDummy() and trail.standard < standard):
                     if(trail.type == '1'):
                         if(trail.category == 'Neut'):
                             if(trail.lastCategory == 'Neut'):
@@ -45,3 +45,34 @@ class user:
                         else:
                             self.neutral_NS.add(trail.timing)
 
+    def findMean(self):
+        sum = 0
+        count = 0
+        for block in self.blocks:
+         #   print('b')
+            for trail in block.trials:
+            #    print('t - ' + trail.isDummy())
+                if(not trail.isDummy()):
+                    sum += trail.timing
+                    count += 1
+
+        self.mean = sum / count
+
+
+    def findStandardDeviation(self):
+        if(not hasattr(self, 'mean')):
+            self.findMean()
+        sum = 0
+        count = 0
+        for block in self.blocks:
+            for trail in block.trials:
+                if(not trail.isDummy()):
+                    sum += (trail.timing - self.mean)**2
+                    count += 1
+
+        self.standardDeviation = (sum/count) ** 0.5
+
+        for block in self.blocks:
+            for trail in block.trials:
+                if(not trail.isDummy()):
+                    trail.standard = abs(trail.timing - self.mean) /self.standardDeviation
