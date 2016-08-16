@@ -23,7 +23,7 @@ class user:
     def getStandradMeans(self,standard):
         for block in self.blocks:
             for trail in block.trials:
-                if(not trail.isDummy() and trail.standard < standard):
+                if((not trail.isDummy()) and trail.standard < standard):
                     if(trail.type == '1'):
                         if(trail.category == 'Neut'):
                             if(trail.lastCategory == 'Neut'):
