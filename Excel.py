@@ -104,7 +104,7 @@ class Excel:
                 else:
                     self.trailsSheet.write(self.switchSheetRow, 3, 3)
 
-        self.trailsSheet.write(self.switchSheetRow, 4, trial.standard)
+        self.trailsSheet.write(self.switchSheetRow, 4, trial.standardScore)
 
         self.switchSheetRow += 1
 
@@ -163,7 +163,7 @@ class Excel:
         self.usersSheet.write(1, 10, 'ISC - Emotinal')
 
         self.usersSheet.write(1, 11, 'Mean')
-        self.usersSheet.write(1, 11, 'Standard deviation')
+        self.usersSheet.write(1, 12, 'Standard deviation')
 
     def close(self):
         self.workbook.close()

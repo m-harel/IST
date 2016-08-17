@@ -20,10 +20,10 @@ class user:
             self.blocks.append(Block.Block(self.id, len(self.blocks) + 1, trail.type))
         self.blocks[-1].addTrail(trail)
 
-    def getStandradMeans(self,standard):
+    def calculateMeans(self, standardScore):
         for block in self.blocks:
             for trail in block.trials:
-                if((not trail.isDummy()) and trail.standard < standard):
+                if((not trail.isDummy()) and trail.standardScore < standardScore):
                     if(trail.type == '1'):
                         if(trail.category == 'Neut'):
                             if(trail.lastCategory == 'Neut'):
@@ -75,4 +75,4 @@ class user:
         for block in self.blocks:
             for trail in block.trials:
                 if(not trail.isDummy()):
-                    trail.standard = abs(trail.timing - self.mean) /self.standardDeviation
+                    trail.standardScore = abs(trail.timing - self.mean) / self.standardDeviation

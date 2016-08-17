@@ -18,6 +18,7 @@ users = []
 for line in dataFileLines[settings.dataFileVariablesLine+1:]:
     trail = interpreter.interprete(line)
     if(trail == None):
+        print('failed interpret line - ' + line)
         continue
 
     if(len(users) == 0 or (users[-1].id != trail.userId)):
@@ -32,10 +33,10 @@ dataFile.close()
 for user in users:
     user.findStandardDeviation()
 
-listOfStandardDeviation = [2.5, 3, 3.5]
-standard = 0
-standardRate = 0
-for standardDeviation in listOfStandardDeviation:
+listOfStandardScores = [2.5, 3, 3.5]
+standardScore = 0
+standardScoreRate = 0
+for standardDeviation in listOfStandardScores:
     countStandard = 0
     countTotal = 0
     for user in users:
@@ -43,31 +44,31 @@ for standardDeviation in listOfStandardDeviation:
             for trail in block.trials:
                 if(not trail.isDummy()):
                     countTotal+=1
-                    if(trail.standard < standardDeviation):
+                    if(trail.standardScore < standardDeviation):
                         countStandard += 1
 
     if(countStandard/countTotal > 0.95):
-        standard = standardDeviation
-        standardRate = countStandard/countTotal
+        standardScore = standardDeviation
+        standardScoreRate = countStandard / countTotal
         break
 
-if(standard == 0):
-    print("standart deviation problem - not found one")
+if(standardScore == 0):
+    print("standard deviation problem - not found standard score with more then 95% trails available")
     exit()
 
 for user in users:
-    user.getStandradMeans(standard)
+    user.calculateMeans(standardScore)
 
 excelFile = Excel.Excel(settings.excelFileName)
 
 excelFile.metaSheet.write(1,0,'data file name')
 excelFile.metaSheet.write(1,1,settings.dataFileName)
 
-excelFile.metaSheet.write(3,0,'standard deviation')
-excelFile.metaSheet.write(3,1,standard)
+excelFile.metaSheet.write(3,0,'standard score')
+excelFile.metaSheet.write(3, 1, standardScore)
 
 excelFile.metaSheet.write(4,0,'rate')
-excelFile.metaSheet.write(4,1,standardRate)
+excelFile.metaSheet.write(4, 1, standardScoreRate)
 
 for user in users:
     excelFile.printUser(user)
