@@ -1,8 +1,8 @@
-#interpreter a line to question
+#interpreter a line to trail
 import Trail
 
 class Interpreter:
-    mustExistVariables = ['Subject','Session','StimCat','LactCategory','StimTextDisp.RT','Q1SlidePath','Q2Slide.RESP','Q1Slide.RESP']
+    mustExistVariables = ['Subject','Session','StimCat','LactCategory','StimTextDisp.RT','Q1SlidePath','Q2Slide.RESP','Q1Slide.RESP','isPrac']
     def __init__(self, line):
 
         if(line.startswith('\ufeff')):
@@ -20,9 +20,11 @@ class Interpreter:
         return (int)(response.split('{')[0])
 
     def interprete(self,line):
+        print(line)
         lineVariables = line.split()
-        if(len(lineVariables) < 4 or lineVariables[2] == 'NULL' or lineVariables[2] == ''):
+        if(len(lineVariables) < 4 or lineVariables[2] == 'NULL' or lineVariables[2] == '' or lineVariables[self.variables.index('isPrac')] == 'Y'):
             return None
+        print(lineVariables[self.variables.index('isPrac')])
         trail = Trail.Trial()
         trail.userId = lineVariables[self.variables.index('Subject')]
         trail.type = lineVariables[self.variables.index('Session')]
