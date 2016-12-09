@@ -15,6 +15,11 @@ class user:
         self.emotional_NS = Mean.Mean() #no switch
         self.blocks = []
 
+        self.accuracyRate = 0
+        self.accuracySwitchRate = 0
+        self.accuracy01Rate = 0
+        self.accuracySwitch01Rate = 0
+
     def addTrial(self, trial):
         if(trial.isDummy()):
             self.blocks.append(Block.Block(self.id, len(self.blocks) + 1, trial.type))
@@ -75,3 +80,14 @@ class user:
                 if(not trial.isDummy()):
                     trial.standardScore = abs(trial.timing - self.mean) / self.standardDeviation
 
+    def calcAccuracyRates(self):
+        for block in self.blocks:
+            self.accuracyRate += (int)(block.accuracy)
+            self.accuracySwitchRate += (int)(block.accuracySwitch)
+            self.accuracy01Rate += (int)(block.accuracy01)
+            self.accuracySwitch01Rate += (int)(block.accuracySwitch01)
+
+        self.accuracyRate /= len(self.blocks)
+        self.accuracySwitchRate /= len(self.blocks)
+        self.accuracy01Rate /= len(self.blocks)
+        self.accuracySwitch01Rate /= len(self.blocks)
