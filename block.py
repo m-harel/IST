@@ -22,26 +22,7 @@ class Block:
         else:
             print("unknown - " + word)
 
-    def addTrail(self, trail):
-        self.trials.append(trail)
-        self.addWord(trail.category)
+    def addTrial(self, trial):
+        self.trials.append(trial)
+        self.addWord(trial.category)
 
-    def findMean(self):
-        sum = 0
-        for trail in self.trials:
-            sum += trail.timing
-
-        self.mean = sum / len(self.trials)
-
-
-    def findStandardDeviation(self):
-        if(not hasattr(self, 'mean')):
-            self.findMean()
-        sum = 0
-        for trail in self.trials:
-            sum += (trail.timing - self.mean)**2
-
-        self.standardDeviation = (sum/len(self.trials)) ** 0.5
-
-        for trail in self.trials:
-            trail.standard = abs(trail.timing - self.mean) /self.standardDeviation

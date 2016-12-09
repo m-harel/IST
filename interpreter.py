@@ -1,10 +1,10 @@
-#interpreter a line to trail
-import Trail
+#interpreter a line to trial
+import Trial
 
 class Interpreter:
     mustExistVariables = ['Subject','Session','StimCat','LactCategory','StimTextDisp.RT','Q1SlidePath','Q2Slide.RESP','Q1Slide.RESP','isPrac']
-    def __init__(self, line):
 
+    def __init__(self, line):
         if(line.startswith('\ufeff')):
             line= line[1:]
         self.variables = line.split()
@@ -20,19 +20,20 @@ class Interpreter:
         return (int)(response.split('{')[0])
 
     def interprete(self,line):
-        print(line)
+        #print(line)
         lineVariables = line.split()
         if(len(lineVariables) < 4 or lineVariables[2] == 'NULL' or lineVariables[2] == '' or lineVariables[self.variables.index('isPrac')] == 'Y'):
             return None
-        print(lineVariables[self.variables.index('isPrac')])
-        trail = Trail.Trial()
-        trail.userId = lineVariables[self.variables.index('Subject')]
-        trail.type = lineVariables[self.variables.index('Session')]
-        trail.category = lineVariables[self.variables.index('StimCat')]
-        trail.lastCategory = lineVariables[self.variables.index('LactCategory')]
-        trail.timing = int(lineVariables[self.variables.index('StimTextDisp.RT')])
-        trail.firstQuestionSlide = lineVariables[self.variables.index('Q1SlidePath')][-4]
-        trail.firstQuestionAnswer = self.questionResponse(lineVariables[self.variables.index('Q1Slide.RESP')])
-        trail.secondQuestionAnswer = self.questionResponse(lineVariables[self.variables.index('Q2Slide.RESP')])
+        #print(lineVariables[self.variables.index('isPrac')])
 
-        return trail
+        trial = Trial.Trial()
+        trial.userId = lineVariables[self.variables.index('Subject')]
+        trial.type = lineVariables[self.variables.index('Session')]
+        trial.category = lineVariables[self.variables.index('StimCat')]
+        trial.lastCategory = lineVariables[self.variables.index('LactCategory')]
+        trial.timing = int(lineVariables[self.variables.index('StimTextDisp.RT')])
+        trial.firstQuestionSlide = lineVariables[self.variables.index('Q1SlidePath')][-4]
+        trial.firstQuestionAnswer = self.questionResponse(lineVariables[self.variables.index('Q1Slide.RESP')])
+        trial.secondQuestionAnswer = self.questionResponse(lineVariables[self.variables.index('Q2Slide.RESP')])
+
+        return trial

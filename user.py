@@ -15,33 +15,63 @@ class user:
         self.emotional_NS = Mean.Mean() #no switch
         self.blocks = []
 
-    def addTrail(self, trail):
-        if(trail.isDummy()):
-            self.blocks.append(Block.Block(self.id, len(self.blocks) + 1, trail.type))
-        self.blocks[-1].addTrail(trail)
+    def addTrial(self, trial):
+        if(trial.isDummy()):
+            self.blocks.append(Block.Block(self.id, len(self.blocks) + 1, trial.type))
+        self.blocks[-1].addTrial(trial)
 
-    def getStandradMeans(self,standard):
+    def calculateMeans(self, standardScore):
         for block in self.blocks:
-            for trail in block.trials:
-                if(trail.standard < standard):
-                    if(trail.type == '1'):
-                        if(trail.category == 'Neut'):
-                            if(trail.lastCategory == 'Neut'):
-                                self.emotional_NN.add(trail.timing)
-                                self.emotional_NS.add(trail.timing)
+            for trial in block.trials:
+                if((not trial.isDummy()) and trial.standardScore < standardScore):
+                    if(trial.type == '1'):
+                        if(trial.category == 'Neut'):
+                            if(trial.lastCategory == 'Neut'):
+                                self.emotional_NN.add(trial.timing)
+                                self.emotional_NS.add(trial.timing)
                             else:
-                                self.emotional_NE.add(trail.timing)
-                                self.emotional_S.add(trail.timing)
+                                self.emotional_NE.add(trial.timing)
+                                self.emotional_S.add(trial.timing)
                         else:
-                            if(trail.lastCategory == 'Neut'):
-                                self.emotional_EN.add(trail.timing)
-                                self.emotional_S.add(trail.timing)
+                            if(trial.lastCategory == 'Neut'):
+                                self.emotional_EN.add(trial.timing)
+                                self.emotional_S.add(trial.timing)
                             else:
-                                self.emotional_EE.add(trail.timing)
-                                self.emotional_NS.add(trail.timing)
-                    elif(trail.type == '2'):
-                        if(trail.isSwitch()):
-                            self.neutral_S.add(trail.timing)
+                                self.emotional_EE.add(trial.timing)
+                                self.emotional_NS.add(trial.timing)
+                    elif(trial.type == '2'):
+                        if(trial.isSwitch()):
+                            self.neutral_S.add(trial.timing)
                         else:
-                            self.neutral_NS.add(trail.timing)
+                            self.neutral_NS.add(trial.timing)
+
+    def findMean(self):
+        sum = 0
+        count = 0
+        for block in self.blocks:
+            for trial in block.trials:
+                if(not  trial.isDummy()):
+                    sum +=  trial.timing
+                    count += 1
+
+        self.mean = sum / count
+
+
+    def findStandardDeviation(self):
+        if(not hasattr(self, 'mean')):
+            self.findMean()
+        sum = 0
+        count = 0
+        for block in self.blocks:
+            for trial in block.trials:
+                if(not trial.isDummy()):
+                    sum += (trial.timing - self.mean)**2
+                    count += 1
+
+        self.standardDeviation = (sum/count) ** 0.5
+
+        for block in self.blocks:
+            for trial in block.trials:
+                if(not trial.isDummy()):
+                    trial.standardScore = abs(trial.timing - self.mean) / self.standardDeviation
 
