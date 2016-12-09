@@ -5,7 +5,7 @@ import Excel
 import subprocess
 
 
-settings = Settings.settings()
+settings = Settings.Settings()
 settings.readSettingsFile()
 
 dataFile = open(settings.dataFileName,'r',encoding=settings.dataFileEncoding)

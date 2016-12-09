@@ -1,4 +1,4 @@
-class settings:
+class Settings:
     dataFileName = ''
     dataFileEncoding = ''
     dataFileVariablesLine = -1
