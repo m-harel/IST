@@ -55,9 +55,9 @@ class Excel:
 
         self.metaSheet = self.workbook.add_worksheet('Meta data')
         self.taskSheet = self.workbook.add_worksheet('Task')
-        self.trialsSheet = self.workbook.add_worksheet('Trials')
-        self.blocksSheet = self.workbook.add_worksheet('Blocks')
         self.usersSheet = self.workbook.add_worksheet('Users')
+        self.blocksSheet = self.workbook.add_worksheet('Blocks')
+        self.trialsSheet = self.workbook.add_worksheet('Trials')
 
         #add titles for all the sheets
         self.metaSheetTitles()
@@ -75,11 +75,11 @@ class Excel:
         self.taskSheet.write(3,0,'Accuracy rates:')
         self.taskSheet.write(4,0,'Accuracy')
         self.taskSheet.write(4, 1, task.accuracyRate)
-        self.taskSheet.write(5,0,'Accuracy(include switch')
+        self.taskSheet.write(5,0,'Accuracy(include switch)')
         self.taskSheet.write(5, 1, task.accuracySwitchRate)
         self.taskSheet.write(6,0,'Accuracy(+-1)')
         self.taskSheet.write(6, 1, task.accuracy01Rate)
-        self.taskSheet.write(7,0,'Accuracy(include switch and +-1')
+        self.taskSheet.write(7,0,'Accuracy(include switch and +-1)')
         self.taskSheet.write(7, 1, task.accuracySwitch01Rate)
         for user in task.users:
             self.printUser(user)
@@ -201,7 +201,6 @@ class Excel:
     def usersSheetTitles(self):
         self.usersSheet.merge_range('B1:D1', 'Neutral version', self.merge_format)
         self.usersSheet.merge_range('E1:K1', 'Emotional version', self.merge_format)
-        self.usersSheet.merge_range('E1:K1', 'Emotional version', self.merge_format)
         self.usersSheet.merge_range('L1:M1', 'Statistics', self.merge_format)
         self.usersSheet.merge_range('N1:Q1', 'Accuracy', self.merge_format)
 
@@ -222,6 +221,8 @@ class Excel:
         self.usersSheet.write(1, Excel.USERS_ACCURACY_SWITCH, 'Accuracy(include switch)')
         self.usersSheet.write(1, Excel.USERS_ACCURACY_01, 'Accuracy(+-1)')
         self.usersSheet.write(1, Excel.USERS_ACCURACY_SWITCH_01, 'Accuracy(include switch and +-1)')
+
+
 
     def close(self):
         self.workbook.close()

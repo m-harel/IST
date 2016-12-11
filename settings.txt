@@ -14,7 +14,7 @@
 
 //encoding options: utf-8, utf-16-le
 version:0.0.1
-data_file:CogCont168-183.txt
-encoding:utf-8
+data_file:CogConForMatan101-167.txt
+encoding:utf-16-le
 variables_name_line:1
 excel_file:ParsedData.xlsx
