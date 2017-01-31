@@ -17,13 +17,17 @@ if dataFileName == None:
 dataFile = open(dataFileName,'r',encoding=settings.dataFileEncoding)
 dataFileLines = dataFile.readlines()
 
-interpreter = Interpreter.Interpreter(dataFileLines[settings.dataFileVariablesLine])
+try:
+    interpreter = Interpreter.Interpreter(dataFileLines[settings.dataFileVariablesLine])
+except:
+    print("Bad data file :(")
+    exit()
 
 task = Task.Task()
 
 for line in dataFileLines[settings.dataFileVariablesLine+1:]:
     trial = interpreter.interprete(line)
-    if(trial == None):
+    if(trial is None):
         continue
 
     task.addTrial(trial)
