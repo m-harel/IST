@@ -3,7 +3,7 @@ import User
 
 class Task:
     ListOfStandardScores = [2.5, 3, 3.5]
-    MinimumStandaraRate = 0.95
+    MinimumStandardRate = 0.95
 
     def __init__(self):
         self.users = []
@@ -50,7 +50,7 @@ class Task:
                             if(trial.standardScore < standardDeviation):
                                 countStandard += 1
 
-            if(countStandard/countTotal > Task.MinimumStandaraRate):
+            if(countStandard/countTotal > Task.MinimumStandardRate):
                 self.standardScore = standardDeviation
                 self.standardScoreRate = countStandard / countTotal
                 break

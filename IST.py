@@ -3,12 +3,18 @@ import Interpreter
 import Task
 import Excel
 import subprocess
+import easygui
+import chardet
 
+dataFileName = easygui.fileopenbox(default="*.txt")
 
 settings = Settings.Settings()
 settings.readSettingsFile()
 
-dataFile = open(settings.dataFileName,'r',encoding=settings.dataFileEncoding)
+if dataFileName == None:
+    dataFileName = settings.dataFileName
+
+dataFile = open(dataFileName,'r',encoding=settings.dataFileEncoding)
 dataFileLines = dataFile.readlines()
 
 interpreter = Interpreter.Interpreter(dataFileLines[settings.dataFileVariablesLine])
